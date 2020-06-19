@@ -1,43 +1,44 @@
-const http = require("http");
+const express = require("express");
+const { response } = require("express");
+const app = express();
+const port = 3000;
 
-const server = http.createServer((request, response) => {
-  //   response.write("hello");
-
-  //   response.writeHead(200, {
-  //     "Content-Type": "text/html",
-  //   });
-  //   response.write(`<input/>`);
-
-  /* switch (request.url) {
-    case "/":
-      response.write("hello");
-      break;
-    case "/posts":
-      response.write("posts");
-      break;
-    default:
-      response.writeHead(404);
-      response.write("404");
-      break;
-  } */
-
-  const data = {
-    id: 1,
-    title: "几个我",
-    content: "更接近偶记",
-  };
-
-  const jsonData = JSON.stringify(data);
-
-  response.writeHead(200, {
-    "Content-Type": "application/json; charset=utf-8",
-  });
-
-  response.write(jsonData);
-
-  response.end();
+app.listen(port, () => {
+  console.log("服务已启动");
 });
 
-server.listen(3000, () => {
-  console.log("服务已启动");
+app.get("/", (request, response) => {
+  response.send("你好");
+});
+
+const data = [
+  {
+    id: 1,
+    title: "公婆人家",
+    content: "金额公积金",
+  },
+  {
+    id: 2,
+    title: "牌内容",
+    content: "你铂金额我弟",
+  },
+  {
+    id: 3,
+    title: "围殴女哦",
+    content: "宁波诶",
+  },
+];
+
+app.get("/posts", (request, response) => {
+  response.send(data);
+});
+
+//参数
+app.get("/posts/:postId", (request, response) => {
+  //解构
+  const { postId } = request.params;
+  //过滤
+  const posts = data.filter((item) => item.id == postId);
+
+  response.send(posts);
 });
