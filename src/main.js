@@ -3,6 +3,11 @@ const { response } = require("express");
 const app = express();
 const port = 3000;
 
+/**
+ * 使用 JSON 中间件
+ */
+app.use(express.json());
+
 app.listen(port, () => {
   console.log("服务已启动");
 });
@@ -41,4 +46,17 @@ app.get("/posts/:postId", (request, response) => {
   const posts = data.filter((item) => item.id == postId);
 
   response.send(posts);
+});
+
+/**
+ * 创建内容
+ */
+app.post("/posts", (request, response) => {
+  const { content } = request.body;
+
+  response.status(201);
+
+  response.send({
+    message: `成功创建了内容: ${content}`,
+  });
 });
