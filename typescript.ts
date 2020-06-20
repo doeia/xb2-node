@@ -1,19 +1,16 @@
-'use strict';
-var __importDefault =
-  (this && this.__importDefault) ||
-  function(mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
-Object.defineProperty(exports, '__esModule', { value: true });
-const express_1 = __importDefault(require('express'));
-const app = express_1.default();
+import express from 'express';
+import { Request, Response } from 'express';
+const app = express();
 const port = 3000;
+
 app.listen(port, () => {
   console.log('服务已启动');
 });
-app.get('/', (request, response) => {
+
+app.get('/', (request: Request, response: Response) => {
   response.send('你好');
 });
+
 const data = [
   {
     id: 1,
@@ -31,12 +28,17 @@ const data = [
     content: '宁波诶',
   },
 ];
-app.get('/posts', (request, response) => {
+
+app.get('/posts', (request: Request, response: Response) => {
   response.send(data);
 });
-app.get('/posts/:postId', (request, response) => {
+
+//参数
+app.get('/posts/:postId', (request: Request, response: Response) => {
+  //解构
   const { postId } = request.params;
+  //过滤
   const posts = data.filter(item => item.id == parseInt(postId, 10));
+
   response.send(posts);
 });
-//# sourceMappingURL=main.js.map
