@@ -19,6 +19,9 @@ export const defaultErrorHandler = (
   response: Response,
   next: NextFunction,
 ) => {
+  if (error.message) {
+    console.log('异常', error.message);
+  }
   let statusCode: number, message: string;
 
   switch (error.message) {
