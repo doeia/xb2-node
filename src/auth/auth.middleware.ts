@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, request } from 'express';
 import jwt from 'jsonwebtoken';
 import * as userService from '../user/user.service';
 import bcrypt from 'bcrypt';
 import { PUBLIC_KEY } from '../app/app.config';
 import { TokenPayload } from './auth.interface';
+import { possess } from './auth.service';
+import { nextTick } from 'process';
 
 /**
  * 验证用户登录数据
@@ -56,4 +58,41 @@ export const authGuard = (
   } catch (error) {
     next(new Error('UNAUTHORIZED'));
   }
+};
+
+/**
+ * 访问控制
+ */
+
+interface AccessControlOptions {
+  possession?: boolean;
+}
+
+export const accessControl = (options: AccessControlOptions) => {
+  return async (request: Request, response: Response, next: NextFunction) => {
+    console.log('访问控制');
+
+    const { possession } = options;
+
+    const { id: userId } = request.user;
+
+    if (userId == 1) return next();
+
+    const resourceIdParam = Object.keys(request.params)[0];
+    const resourceType = resourceIdParam.replace('Id', '');
+    const resourceId = parseInt(request.params[resourceIdParam], 10);
+
+    if (possession) {
+      try {
+        const ownResource = await possess({ resourceId, resourceType, userId });
+
+        if (!ownResource) {
+          return next(new Error('USER_DOES_NOT_OWN_RESOURCE'));
+        }
+      } catch (error) {
+        return next(error);
+      }
+    }
+    next();
+  };
 };
